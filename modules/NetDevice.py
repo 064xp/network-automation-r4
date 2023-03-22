@@ -1,8 +1,13 @@
-from typing import Union
-import typing
-from .ConnectionInfo import ConnectionInfo
+from __future__ import annotations
+from typing import Union, cast
 from netmiko import BaseConnection
-# from .StateClasses.Interface import Interface
+from typing import TYPE_CHECKING
+
+from .ConnectionInfo import ConnectionInfo
+from .StateClasses.DeviceHealth import DeviceHealth
+
+if TYPE_CHECKING:
+    from .StateClasses.Interface import Interface
 
 
 class NetDevice:
@@ -10,7 +15,8 @@ class NetDevice:
     domainName: str = ""
     connectionInfo: ConnectionInfo
     conn: BaseConnection
-    # interfaces: list[Interface]
+    interfaces: list[Interface]
+    deviceHealth: DeviceHealth
 
     def __init__(self, connectionInfo: Union[ConnectionInfo, None] = None):
         if connectionInfo is None:
@@ -22,7 +28,7 @@ class NetDevice:
         if self.connectionInfo is None:
             raise AttributeError("Connection info not set")
         self.connectionInfo.connect()
-        self.conn = typing.cast(BaseConnection, self.connectionInfo.conn)
+        self.conn = cast(BaseConnection, self.connectionInfo.conn)
 
     def getDeviceID(self):
         return self.hostname + "." + self.domainName

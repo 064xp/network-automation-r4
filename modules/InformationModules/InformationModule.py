@@ -2,12 +2,7 @@ from modules.NetDevice import NetDevice
 
 
 class InformationModule:
-    netDevice: NetDevice
-
-    def __init__(self, netDevice: NetDevice):
-        self.netDevice = netDevice
-
-    def getInfo(self):
+    def getInfo(self, netDevice: NetDevice):
         raise NotImplementedError("Start get info not implemented")
 
     def moduleSupported(self) -> bool:

@@ -8,13 +8,13 @@ import re
 class InterfaceInformation(InformationModule):
     interfaces: list[Interface] = []
 
-    def separateInterfaceInfo(self, cmdOutput: str) -> list[str]:
+    def __separateInterfaceInfo(self, cmdOutput: str) -> list[str]:
         pattern = r'^(?:.+)\n\s+(?:.+(?:\n\s+.+\n*)*)$'
         matches = re.findall(pattern, cmdOutput, re.MULTILINE)
 
         return matches
 
-    def getBasicInfo(self, interfaceInfo: str) -> Union[dict[str, str], None]:
+    def __getBasicInfo(self, interfaceInfo: str) -> Union[dict[str, str], None]:
         pattern = r'([A-Za-z]+)([\d\/]+) is ([\w ]+), line protocol is (\w+)'
         m = re.search(pattern, interfaceInfo)
         if m is None:
@@ -27,7 +27,7 @@ class InterfaceInformation(InformationModule):
             "lineProtocol": m.group(4)
         }
 
-    def getIP(self, interfaceInfo: str) -> Union[str, None]:
+    def __getIP(self, interfaceInfo: str) -> Union[str, None]:
         pattern = r'Internet address is ([\d\.]+)'
         m = re.search(pattern, interfaceInfo)
 
@@ -36,7 +36,7 @@ class InterfaceInformation(InformationModule):
 
         return m.group(1)
 
-    def getNeighbor(self, neighborOutput: str, intType: str, intNum: str) -> Union[None, tuple[NetDevice, str]]:
+    def __getNeighbor(self, neighborOutput: str, intType: str, intNum: str) -> Union[None, tuple[NetDevice, str]]:
         neighborsSplit = neighborOutput.split("-------------------------")
         neighborInfo = None
         interfaceName = intType + intNum
@@ -77,7 +77,7 @@ class InterfaceInformation(InformationModule):
 
         return neighborDevice, ip
 
-    def getPacketLoss(self, intInfo: str) -> tuple[int, int]:
+    def __getPacketLoss(self, intInfo: str) -> tuple[int, int]:
         pattern = r'Input queue: \d+\/\d+\/(\d+)\/\d+.*Total output drops: (\d+)'
         m = re.search(pattern, intInfo)
 
@@ -86,19 +86,21 @@ class InterfaceInformation(InformationModule):
 
         return int(m.group(1)), int(m.group(2))
 
-    def getInfo(self) -> list[Interface]:
+    def getInfo(self, netDevice: NetDevice) -> dict[str, NetDevice]:
         interfaces: list[Interface] = []
-        self.netDevice.conn.enable()
-        result = self.netDevice.conn.send_command("show interfaces")
-        intInfo = self.separateInterfaceInfo(cast(str, result))
-        cdpNeighbors = self.netDevice.conn.send_command(
+        netDevice.conn.enable()
+        result = netDevice.conn.send_command("show interfaces")
+        intInfo = self.__separateInterfaceInfo(cast(str, result))
+        cdpNeighbors = netDevice.conn.send_command(
             "show cdp neighbors detail")
+
+        neighbors: dict[str, NetDevice] = {}
 
         for i in intInfo:
             interface = Interface()
 
             # Get name, status & line protocol
-            basicInfo = self.getBasicInfo(i)
+            basicInfo = self.__getBasicInfo(i)
 
             if basicInfo is None:
                 continue
@@ -110,11 +112,11 @@ class InterfaceInformation(InformationModule):
 
             # Get IP
             if basicInfo["status"] == "up":
-                interface.ip = self.getIP(i)
+                interface.ip = self.__getIP(i)
 
             # Get Neighbor
             if basicInfo["lineProtocol"] == "up":
-                nres = self.getNeighbor(
+                nres = self.__getNeighbor(
                     cast(str, cdpNeighbors),
                     basicInfo["type"],
                     basicInfo["number"],
@@ -124,11 +126,14 @@ class InterfaceInformation(InformationModule):
                     neighbor, neighborIP = nres
                     interface.neighbor = neighbor
                     interface.neighborIP = neighborIP
+                    neighbors[neighbor.getDeviceID()] = neighbor
 
-            inputPacketLoss, outputPacketLoss = self.getPacketLoss(i)
+            inputPacketLoss, outputPacketLoss = self.__getPacketLoss(i)
             interface.inputPacketLoss = inputPacketLoss
             interface.outputPacketLoss = outputPacketLoss
 
             interfaces.append(interface)
 
-        return interfaces
+        netDevice.interfaces = interfaces
+
+        return neighbors
