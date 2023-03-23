@@ -17,6 +17,7 @@ class NetDevice:
     conn: BaseConnection
     interfaces: list[Interface]
     deviceHealth: DeviceHealth
+    visited = False
 
     def __init__(self, connectionInfo: Union[ConnectionInfo, None] = None):
         if connectionInfo is None:
@@ -31,4 +32,6 @@ class NetDevice:
         self.conn = cast(BaseConnection, self.connectionInfo.conn)
 
     def getDeviceID(self):
-        return self.hostname + "." + self.domainName
+        return self.hostname + \
+            "." if self.domainName != "" else "" + \
+            self.domainName
