@@ -11,15 +11,16 @@ if TYPE_CHECKING:
 
 
 class NetDevice:
-    hostname = ""
-    domainName: str = ""
-    connectionInfo: ConnectionInfo
-    conn: BaseConnection
-    interfaces: list[Interface]
-    deviceHealth: DeviceHealth
-    visited = False
 
     def __init__(self, connectionInfo: Union[ConnectionInfo, None] = None):
+        self.hostname = ""
+        self.domainName: str = ""
+        self.connectionInfo: ConnectionInfo
+        self.conn: BaseConnection
+        self.interfaces: list[Interface]
+        self.deviceHealth: DeviceHealth
+        self.visited = False
+
         if connectionInfo is None:
             return
 
@@ -31,7 +32,9 @@ class NetDevice:
         self.connectionInfo.connect()
         self.conn = cast(BaseConnection, self.connectionInfo.conn)
 
-    def getDeviceID(self):
-        return self.hostname + \
-            "." if self.domainName != "" else "" + \
-            self.domainName
+    def getDeviceID(self) -> str:
+        deviceID = self.hostname
+        if len(self.domainName) > 0:
+            deviceID += '.' + self.domainName
+
+        return deviceID

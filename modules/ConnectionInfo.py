@@ -3,17 +3,12 @@ from netmiko import ConnectHandler, BaseConnection
 
 
 class ConnectionInfo:
-    host = ""
-    user = ""
-    password = ""
-    secret = ""
-    conn: Union[BaseConnection, None] = None
-
     def __init__(self, host: str, user: str, password: str, secret: str):
         self.host = host
         self.user = user
         self.password = password
         self.secret = secret
+        conn: Union[BaseConnection, None] = None
 
     def connect(self):
         router = {
