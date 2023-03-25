@@ -25,3 +25,9 @@ class BasicInformation(InformationModule):
 
         netDevice.domainName = domain
         netDevice.hostname = hostname
+
+    def moduleSupported(self, netDevice: NetDevice) -> bool:
+        # If it already has domain or hostname, no need to run the module on it
+        if netDevice.domainName == "" or netDevice.hostname == "":
+            return True
+        return False

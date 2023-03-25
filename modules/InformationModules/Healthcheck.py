@@ -53,7 +53,7 @@ class Healthcheck(InformationModule):
             Pings host, returns average latency
         '''
         ping_process = subprocess.Popen(
-            ["ping", "-c", "4", host], stdout=subprocess.PIPE)
+            ["ping", "-c", "2", host], stdout=subprocess.PIPE)
 
         output, error = ping_process.communicate()
         output = output.decode('utf-8')

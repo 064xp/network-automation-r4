@@ -56,7 +56,8 @@ class InterfaceInformation(InformationModule):
             intType: str,
             intNum: str,
             deviceMap: dict[str, NetDevice],
-            connectionMap: dict[str, Connection]
+            connectionMap: dict[str, Connection],
+            deviceQueue: list[dict[str, str]]
     ) -> list[InterfaceNeighbor]:
         # Patterns
         devIdPattern = r'Device ID: ([\w\.]+)'
@@ -103,6 +104,11 @@ class InterfaceInformation(InformationModule):
             if neighborDevice.getDeviceID() not in deviceMap:
                 # Add to deviceMap, key is its deviceID
                 deviceMap[neighborDevice.getDeviceID()] = neighborDevice
+                # Append to the devices to visit queue
+                deviceQueue.append({
+                    "deviceID": neighborDevice.getDeviceID(),
+                    "ip": ip
+                })
 
             # Create interface neighbor
             intNeighbor = InterfaceNeighbor(ip, portID, deviceId)
@@ -112,8 +118,6 @@ class InterfaceInformation(InformationModule):
             conn = Connection()
             conn.addDevice(netDevice.getDeviceID(), interfaceName)
             conn.addDevice(neighborDevice.getDeviceID(), portID)
-            print(conn.devices)
-            print(conn.interfaces)
 
             if conn.getID() not in connectionMap:
                 connectionMap[conn.getID()] = conn
@@ -133,7 +137,8 @@ class InterfaceInformation(InformationModule):
             self,
             netDevice: NetDevice,
             deviceMap: dict[str, NetDevice],
-            connectionMap: dict[str, Connection]
+            connectionMap: dict[str, Connection],
+            deviceQueue: list[dict[str, str]]
     ):
         interfaces: list[Interface] = []
         netDevice.conn.enable()
@@ -170,7 +175,8 @@ class InterfaceInformation(InformationModule):
                     basicInfo["type"],
                     basicInfo["number"],
                     deviceMap,
-                    connectionMap
+                    connectionMap,
+                    deviceQueue
                 )
 
                 interface.neighbors = neighbors
@@ -183,6 +189,3 @@ class InterfaceInformation(InformationModule):
 
         # update device
         netDevice.interfaces = interfaces
-        # Add to device map if not in already
-        if netDevice.getDeviceID() not in deviceMap:
-            deviceMap[netDevice.getDeviceID()] = netDevice

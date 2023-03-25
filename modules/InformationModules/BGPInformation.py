@@ -83,4 +83,9 @@ class BGPInformation(InformationModule):
         return int(res.group(1))
 
     def moduleSupported(self, netDevice: NetDevice) -> bool:
-        return True
+        netDevice.conn.enable()
+        output = netDevice.conn.send_command("show ip protocols")
+        if "bgp" in output:
+            return True
+
+        return False
