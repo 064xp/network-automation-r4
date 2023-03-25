@@ -4,6 +4,7 @@ import re
 from .InformationModule import InformationModule
 from ..NetDevice import NetDevice
 from ..StateClasses.BGPNeighbor import BGPNeighbor
+from ..StateClasses.BGPInfo import BGPInfo
 
 
 class BGPInformation(InformationModule):
@@ -15,12 +16,7 @@ class BGPInformation(InformationModule):
         AS = self.__getAS(bgpSummary)
         neighbors = self.__getNeighbors(bgpSummary)
 
-        for neighbor in neighbors:
-            print(
-                f"Neighbor host: {neighbor.ip} AS {neighbor.autonomousSystem}")
-            print(f"  state: {neighbor.state}")
-            print(f"  prefixes: {neighbor.prefixes}")
-            print(f"  Uptime: {neighbor.getUptime()}")
+        netDevice.routingInfo = BGPInfo("BGP", neighbors, AS)
 
     def __getNeighbors(self, bgpSummary: str) -> list[BGPNeighbor]:
         bgpNeighbors: list[BGPNeighbor] = []
@@ -85,9 +81,6 @@ class BGPInformation(InformationModule):
             return -1
 
         return int(res.group(1))
-
-    # def __findDeviceID(self, host: str, netDevice: NetDevice) -> str:
-    #     for n in netDevice.
 
     def moduleSupported(self, netDevice: NetDevice) -> bool:
         return True

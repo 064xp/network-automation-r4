@@ -10,6 +10,11 @@ class ConnectionInfo:
         self.secret = secret
         conn: Union[BaseConnection, None] = None
 
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        del state['conn']
+        return state
+
     def connect(self):
         router = {
             'device_type': 'cisco_ios',

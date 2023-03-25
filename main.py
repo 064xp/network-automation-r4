@@ -1,3 +1,5 @@
+import jsonpickle
+from typing import cast
 from modules.NetDevice import NetDevice
 from modules.ConnectionInfo import ConnectionInfo
 from modules.InformationModules.BasicInformation import BasicInformation
@@ -24,19 +26,6 @@ binfoModule.getInfo(r1)
 ifModule = InterfaceInformation()
 ifModule.getInfo(r1, deviceMap, connectionMap)
 
-for i in r1.interfaces:
-    print(f"Interface: {i.getName()}")
-    print(f"  Status: {i.status}, line protocol: {i.lineProtocol}")
-    if i.ip is not None:
-        print(f"  IP: {i.ip}")
-    for neighbor in i.neighbors:
-        print(
-            f"  Neighbor: {neighbor.deviceID} -> {neighbor.ip} ({neighbor.interface})")
-    print(f"  PacketLoss: I:{i.inputPacketLoss} O:{i.outputPacketLoss}")
-    print("\n")
-
-
-print("======================= BGP =======================")
 bgpModule = BGPInformation()
 bgpModule.getInfo(r1)
 
@@ -51,5 +40,6 @@ bgpModule.getInfo(r1)
 # print(f"Avg latency: {r1.deviceHealth.latency}ms")
 
 
-print(deviceMap)
-print(connectionMap)
+print(jsonpickle.encode(deviceMap, indent=4, unpicklable=False))
+print(jsonpickle.encode(connectionMap, indent=4, unpicklable=False))
+# print(connectionMap)

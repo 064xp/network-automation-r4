@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 
 from .ConnectionInfo import ConnectionInfo
 from .StateClasses.DeviceHealth import DeviceHealth
+from .StateClasses.RoutingInfo import RoutingInfo
 
 if TYPE_CHECKING:
     from .StateClasses.Interface import Interface
@@ -19,12 +20,21 @@ class NetDevice:
         self.conn: BaseConnection
         self.interfaces: list[Interface]
         self.deviceHealth: DeviceHealth
+        self.routingInfo: RoutingInfo
         self.visited = False
 
         if connectionInfo is None:
             return
 
         self.connectionInfo = connectionInfo
+
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        if 'connectionInfo' in state:
+            del state['connectionInfo']
+        if 'conn' in state:
+            del state['conn']
+        return state
 
     def connect(self):
         if self.connectionInfo is None:
