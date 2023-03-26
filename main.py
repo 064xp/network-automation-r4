@@ -1,6 +1,6 @@
 import jsonpickle
 from typing import cast, Union
-from fastapi import FastAPI
+from fastapi import FastAPI, Response
 
 from modules.NetworkCrawler import NetworkCrawler
 
@@ -32,4 +32,22 @@ def startCrawl():
     }
 
 
-startCrawl()
+@app.get('/demo')
+def demo():
+    crawler = NetworkCrawler(defaultCredentials, credentialsMap)
+    crawler.performScan(initialHost, None, defaultCredentials)
+    # response = '{\
+    #     "devices": {},\
+    #     "connections": {}\
+    # }'.format(
+    #     jsonpickle.encode(crawler.deviceMap, indent=4, unpicklable=False),
+    #     jsonpickle.encode(crawler.connectionMap, indent=4, unpicklable=False)
+    # )
+    devMap = cast(str, jsonpickle.encode(
+        crawler.deviceMap, indent=4, unpicklable=False))
+    connectionMap = cast(str, jsonpickle.encode(
+        crawler.connectionMap, indent=4, unpicklable=False))
+    response = '{"devices": ' + devMap + \
+        ', "connections": ' + connectionMap + '}'
+
+    return Response(content=response, media_type="application/json")
