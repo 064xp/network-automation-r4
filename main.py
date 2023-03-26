@@ -1,7 +1,10 @@
 import jsonpickle
-from typing import cast
+from typing import cast, Union
+from fastapi import FastAPI
+
 from modules.NetworkCrawler import NetworkCrawler
 
+app = FastAPI()
 
 credentialsMap = {}
 defaultCredentials = {
@@ -12,8 +15,21 @@ defaultCredentials = {
 
 initialHost = "168.16.1.1"
 
-crawler = NetworkCrawler(defaultCredentials, credentialsMap)
-crawler.crawl(initialHost, defaultCredentials)
 
-print(jsonpickle.encode(crawler.deviceMap, indent=4, unpicklable=False))
-print(jsonpickle.encode(crawler.connectionMap, indent=4, unpicklable=False))
+@app.get("/")
+def read_root():
+    return {"Hello": "World"}
+
+
+@app.get("/start_crawl")
+def startCrawl():
+    crawler = NetworkCrawler(defaultCredentials, credentialsMap)
+    crawler.crawl(initialHost, defaultCredentials)
+
+    return {
+        "devices": jsonpickle.encode(crawler.deviceMap, indent=4, unpicklable=False),
+        "connections": jsonpickle.encode(crawler.connectionMap, indent=4, unpicklable=False)
+    }
+
+
+startCrawl()

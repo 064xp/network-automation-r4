@@ -1,2 +1,4 @@
 netmiko
 jsonpickle
+uvicorn[standard]
+fastapi

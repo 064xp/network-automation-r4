@@ -36,7 +36,7 @@ class BGPInformation(InformationModule):
         return bgpNeighbors
 
     def __getNeighbor(self, neighborData: str) -> BGPNeighbor:
-        pattern = r'[\d\.\:]+'
+        pattern = r'[\w\.\:]+'
 
         res = re.findall(pattern, neighborData)
 
@@ -48,10 +48,15 @@ class BGPInformation(InformationModule):
         uptime = res[8]
         statePref = res[9]
 
-        uptimeSplit = uptime.split(':')
-        uptimeHours = int(uptimeSplit[0])
-        uptimeMinutes = int(uptimeSplit[1])
-        uptimeSeconds = int(uptimeSplit[2])
+        uptimeHours = 0
+        uptimeMinutes = 0
+        uptimeSeconds = 0
+
+        if any(chr.isdigit() for chr in uptime):
+            uptimeSplit = uptime.split(':')
+            uptimeHours = int(uptimeSplit[0])
+            uptimeMinutes = int(uptimeSplit[1])
+            uptimeSeconds = int(uptimeSplit[2])
 
         state: str = "Establish"
         prefixes: int = 0
