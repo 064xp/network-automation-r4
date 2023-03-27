@@ -4,10 +4,14 @@
 
     import StatusIndicatorBubble from '$lib/components/StatusIndicatorBubble.svelte';
     import InterfaceInfo from '$lib/components/DeviceInfoPanel/InterfaceInfo.svelte';
+    import InformationElement from './InformationElement.svelte';
+    import BGPInfo from './RoutingInfo/BGPInfo.svelte';
 
     export let device: NetDevice;
 
     $: console.log(device);
+
+    const getPercentage = (total: number, ammount: number): number => (ammount * 100) / total;
 </script>
 
 <div class="container">
@@ -22,13 +26,33 @@
         <p class="domain-name">
             {device.domainName}
         </p>
-        <div class="info-section">
-            <!-- Interfaces -->
-            <h2 class="info-section_header">Interfaces</h2>
-            {#each device.interfaces as int}
-                <InterfaceInfo deviceInterface={int} />
-            {/each}
-        </div>
+        {#if device.visited}
+            <div class="info-section">
+                <!-- Device Health -->
+                <h2 class="info-section_header">Device Health</h2>
+                <InformationElement name="CPU Usage" content={`${device.deviceHealth.cpuUsage}%`} />
+                <InformationElement
+                    name="Memory Usge"
+                    content={`${getPercentage(
+                        device.deviceHealth.freeMemory + device.deviceHealth.memoryUsed,
+                        device.deviceHealth.memoryUsed
+                    ).toFixed(2)}%`}
+                />
+                <InformationElement name="Latency" content={`${device.deviceHealth.latency} ms`} />
+
+                {#if device.routingInfo}
+                    <!-- Routing Info -->
+                    <h2 class="info-section_header">Routing</h2>
+                    <BGPInfo routingInfo={device.routingInfo} />
+                {/if}
+
+                <!-- Interfaces -->
+                <h2 class="info-section_header">Interfaces</h2>
+                {#each device.interfaces as int}
+                    <InterfaceInfo deviceInterface={int} />
+                {/each}
+            </div>
+        {/if}
         <p />
     {/if}
 </div>

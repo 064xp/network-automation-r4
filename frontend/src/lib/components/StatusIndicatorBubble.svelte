@@ -7,6 +7,7 @@
 </script>
 
 <script lang="ts">
+    export let style: string = '';
     export let status: IndicatorStatus = IndicatorStatus.Active;
     export let size: number = 20;
 </script>
@@ -16,7 +17,7 @@
     class:active={status === IndicatorStatus.Active}
     class:inactive={status === IndicatorStatus.Inactive}
     class:idle={status === IndicatorStatus.Idle}
-    style="height: {size}px; width: {size}px;"
+    style="height: {size}px; width: {size}px; {style}"
 />
 
 <style>

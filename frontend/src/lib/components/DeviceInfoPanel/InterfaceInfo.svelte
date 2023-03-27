@@ -147,8 +147,12 @@
         font-weight: normal;
     }
 
-    .indent {
+    :global(.indent) {
         padding-left: 1.4em;
+    }
+
+    :global(.indent-double) {
+        padding-left: 2.8em;
     }
 
     .neighbor-header img {
