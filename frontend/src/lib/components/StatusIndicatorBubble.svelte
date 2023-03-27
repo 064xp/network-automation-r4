@@ -9,20 +9,6 @@
 <script lang="ts">
     export let status: IndicatorStatus = IndicatorStatus.Active;
     export let size: number = 20;
-
-    let indicatorStateClass = '';
-
-    $: {
-        console.log('ran', status);
-        switch (status) {
-            case IndicatorStatus.Active:
-                indicatorStateClass = 'active';
-            case IndicatorStatus.Idle:
-                indicatorStateClass = 'idle';
-            case IndicatorStatus.Inactive:
-                indicatorStateClass = 'inactive';
-        }
-    }
 </script>
 
 <div
