@@ -2,10 +2,9 @@
     import type { DeviceInterface } from '$lib/types/devices';
     import { IndicatorStatus } from '$lib/components/StatusIndicatorBubble.svelte';
 
-    import './infoSection.css';
-
     import StatusIndicatorBubble from '$lib/components/StatusIndicatorBubble.svelte';
-    import Router from '$lib/images/router.png';
+    import InformationElement from './InformationElement.svelte';
+    import routerImg from '$lib/images/router.png';
 
     export let deviceInterface: DeviceInterface;
 
@@ -42,23 +41,32 @@
         </div>
     </div>
     <div class="indent">
+        <div class="section">
+            <h3 class="subtitle">Basic Info</h3>
+
+            <div class="indent">
+                <InformationElement name="IP" content={deviceInterface.ip || ''} />
+                <InformationElement
+                    name="Input Packet Loss"
+                    content={deviceInterface.inputPacketLoss}
+                />
+                <InformationElement
+                    name="Ouput Packet Loss"
+                    content={deviceInterface.outputPacketLoss}
+                />
+            </div>
+        </div>
         {#if deviceInterface.neighbors.length > 0}
-            <h3 class="neighbors-title">Neighbors</h3>
+            <h3 class="subtitle">Neighbors</h3>
             <div class="neighbors indent">
                 {#each deviceInterface.neighbors as neighbor}
                     <div class="neighbor-header">
-                        <img src={Router} alt="Network device" />
+                        <img src={routerImg} alt="Network device" />
                         <h4>{neighbor.deviceID}</h4>
                     </div>
                     <div class="neighbor-details indent">
-                        <div class="info-section_element">
-                            <p class="info-section_element-name">IP</p>
-                            <p class="info-section_element-content">{neighbor.ip}</p>
-                        </div>
-                        <div class="info-section_element">
-                            <p class="info-section_element-name">Int</p>
-                            <p class="info-section_element-content">{neighbor.interface}</p>
-                        </div>
+                        <InformationElement name="IP" content={neighbor.ip} />
+                        <InformationElement name="Int" content={neighbor.interface} />
                     </div>
                 {/each}
             </div>
@@ -80,6 +88,11 @@
 
     .header h2 {
         margin: 0 0 0 0.5em;
+        font-size: 1.4em;
+    }
+
+    .section {
+        margin: 0 0 0.6em 0;
     }
 
     .int-status {
@@ -118,8 +131,10 @@
         background-color: #e74c3c;
     }
 
-    .neighbors-title {
-        margin: 0.5em;
+    .subtitle {
+        margin: 0.3em 0 0.5em 0;
+        border-bottom: 2px solid #34495e;
+        display: inline-block;
     }
 
     .neighbor-header {

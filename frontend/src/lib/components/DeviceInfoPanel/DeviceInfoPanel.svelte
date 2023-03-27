@@ -1,7 +1,6 @@
 <script lang="ts">
     import type { NetDevice } from '$lib/types/devices';
     import { IndicatorStatus } from '$lib/components/StatusIndicatorBubble.svelte';
-    import './infoSection.css';
 
     import StatusIndicatorBubble from '$lib/components/StatusIndicatorBubble.svelte';
     import InterfaceInfo from '$lib/components/DeviceInfoPanel/InterfaceInfo.svelte';
@@ -38,7 +37,7 @@
     .container {
         height: 100vh;
         box-sizing: border-box;
-        width: 30vw;
+        width: 35vw;
         background-color: white;
         border-radius: 0 7px 7px 0;
 
@@ -63,5 +62,17 @@
 
     .domain-name {
         margin: 0.3em;
+    }
+
+    .info-section {
+        margin: 0 0 0.5em 0;
+    }
+
+    .info-section_header {
+        background-color: #ecf0f1;
+        text-align: center;
+        font-size: 1.5em;
+        padding: 0.2em;
+        border-radius: 7px;
     }
 </style>
