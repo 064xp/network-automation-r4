@@ -1,21 +1,27 @@
-<script>
-	import { onMount } from "svelte";
+<script lang="ts">
+    import type { NetDevices, NetDevice } from '$lib/types/devices';
+
+    import DeviceInfoPanel from '$lib/components/DeviceInfoPanel/DeviceInfoPanel.svelte';
+    import TopologyView from '$lib/components/Topology/TopologyView.svelte';
+
+    import { onMount } from 'svelte';
     import axios from 'axios';
-    import demoJSON from '../../demo.json'
+    import demoJSON from '$lib/demo.json';
 
-    let devices = {}
-    let connections = {}
-
+    let devices: NetDevices = {};
+    let connections = {};
+    let selectedDevice: NetDevice;
 
     onMount(async () => {
-        console.log("hello")
-        devices = demoJSON.devices;
+        console.log('hello');
+        // @ts-ignore
+        devices = demoJSON.devices as NetDevices;
         connections = demoJSON.connections;
+        const keys = Object.keys(devices);
+        if (keys.length > 0) selectedDevice = devices['R1.r1.com'];
         // const res = await axios.get("localhost:8000");
         // console.log(res);
-    })
-
-
+    });
 </script>
 
 <svelte:head>
@@ -23,18 +29,14 @@
     <meta name="description" content="Svelte demo app" />
 </svelte:head>
 
-<section>
-    <div class="main-container">
-        hello world
-    d
-    </div>
+<section class="main-container">
+    <DeviceInfoPanel device={selectedDevice} />
+    <TopologyView {connections} {devices} />
 </section>
 
 <style>
-    .main-container{ 
-        background: white;
-        width: 60vw;
-        height: 95vh;
-        border-radius: 10px;
+    .main-container {
+        display: flex;
+        width: 100vw;
     }
 </style>
