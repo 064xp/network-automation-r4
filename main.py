@@ -1,10 +1,28 @@
 import jsonpickle
 from typing import cast, Union
 from fastapi import FastAPI, Response
+from fastapi.middleware.cors import CORSMiddleware
 
 from modules.NetworkCrawler import NetworkCrawler
 
 app = FastAPI()
+
+
+origins = [
+    "http://localhost.tiangolo.com",
+    "https://localhost.tiangolo.com",
+    "http://localhost",
+    "http://localhost:8080",
+    "http://localhost:5173",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    # allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 credentialsMap = {}
 defaultCredentials = {
@@ -14,11 +32,6 @@ defaultCredentials = {
 }
 
 initialHost = "168.16.1.1"
-
-
-@app.get("/")
-def read_root():
-    return {"Hello": "World"}
 
 
 @app.get("/start_crawl")

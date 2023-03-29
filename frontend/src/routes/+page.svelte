@@ -13,14 +13,14 @@
     let selectedDevice: NetDevice;
 
     onMount(async () => {
-        console.log('hello');
+        const res = await axios.get('http://localhost:8000/demo');
+
         // @ts-ignore
-        devices = demoJSON.devices as NetDevices;
-        connections = demoJSON.connections;
+        devices = res.data.devices as NetDevices;
+        // @ts-ignore
+        connections = res.data.connections as Connections;
         const keys = Object.keys(devices);
         if (keys.length > 0) selectedDevice = devices['R1.r1.com'];
-        // const res = await axios.get("localhost:8000");
-        // console.log(res);
     });
 </script>
 

@@ -29,6 +29,9 @@ class NetworkCrawler:
 
         while len(self.deviceQueue) > 0:
             d = self.deviceQueue.pop(0)
+            # If we've already scanned this device
+            if d["deviceID"] in self.deviceMap:
+                continue
             self.performScan(d["ip"], d["deviceID"])
             c += 1
 
