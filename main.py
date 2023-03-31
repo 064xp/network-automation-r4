@@ -8,18 +8,9 @@ from modules.NetworkCrawler import NetworkCrawler
 app = FastAPI()
 
 
-origins = [
-    "http://localhost.tiangolo.com",
-    "https://localhost.tiangolo.com",
-    "http://localhost",
-    "http://localhost:8080",
-    "http://localhost:5173",
-]
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    # allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -49,13 +40,6 @@ def startCrawl():
 def demo():
     crawler = NetworkCrawler(defaultCredentials, credentialsMap)
     crawler.performScan(initialHost, None, defaultCredentials)
-    # response = '{\
-    #     "devices": {},\
-    #     "connections": {}\
-    # }'.format(
-    #     jsonpickle.encode(crawler.deviceMap, indent=4, unpicklable=False),
-    #     jsonpickle.encode(crawler.connectionMap, indent=4, unpicklable=False)
-    # )
     devMap = cast(str, jsonpickle.encode(
         crawler.deviceMap, indent=4, unpicklable=False))
     connectionMap = cast(str, jsonpickle.encode(

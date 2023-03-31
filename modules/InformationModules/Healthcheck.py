@@ -11,7 +11,7 @@ class Healthcheck(InformationModule):
     def getInfo(self, netDevice: NetDevice):
         netDevice.conn.enable()
         cpuOutput = netDevice.conn.send_command("show processes cpu")
-        memoryOutput = netDevice.conn.send_command("show memory")
+        memoryOutput = netDevice.conn.send_command("show memory stat")
         devHealth = DeviceHealth()
 
         cpuUsage = self.__getCPUPercentage(cast(str, cpuOutput))
